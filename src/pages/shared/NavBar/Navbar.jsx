@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router';
 import ProfastLogo from '../ProfastLogo/ProfastLogo';
+import useAuth from '../../../hooks/useAuth';
 
 const Navbar = () => {
 
@@ -8,6 +9,10 @@ const Navbar = () => {
             <li><NavLink to='/'>Home</NavLink></li>
             <li><NavLink to='/about'>About Us</NavLink></li>
     </>
+
+    const {user } = useAuth();
+    console.log(user);
+    
 
     return (
         <div className="navbar bg-base-100 shadow-sm">
