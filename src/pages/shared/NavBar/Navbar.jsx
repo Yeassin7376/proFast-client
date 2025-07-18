@@ -4,15 +4,30 @@ import ProfastLogo from '../ProfastLogo/ProfastLogo';
 import useAuth from '../../../hooks/useAuth';
 
 const Navbar = () => {
+  const { user, logout } = useAuth();
+
   const links = (
     <>
-      <li><NavLink to="/">Home</NavLink></li>
-      <li><NavLink to="/sendParcel">Send A Parcel</NavLink></li>
-      <li><NavLink to="/about">About Us</NavLink></li>
+      <li>
+        <NavLink to="/">Home</NavLink>
+      </li>
+      <li>
+        <NavLink to="/sendParcel">Send A Parcel</NavLink>
+      </li>
+
+      {user && (
+        <>
+          <li>
+            <NavLink to="/dashboard">Dashboard</NavLink>
+          </li>
+        </>
+      )}
+      <li>
+        <NavLink to="/about">About Us</NavLink>
+      </li>
     </>
   );
 
-  const { user, logout } = useAuth();
   // console.log(user);
 
   const handleLogout = () => {

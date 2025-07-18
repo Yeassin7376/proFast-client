@@ -4,16 +4,15 @@ import { useLoaderData } from 'react-router';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 import useAuth from '../../hooks/useAuth';
-
+import useAxiosSecure from '../../hooks/useAxiosSecure';
 
 const generateTrackingId = () => {
   const date = new Date();
   const yyyyMMdd = date.toISOString().slice(0, 10).replace(/-/g, '');
-  const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+  const random = Math.random().toString(36).substring(2, 7).toUpperCase();
   const number = Math.floor(1000 + Math.random() * 9000);
   return `TRK-${yyyyMMdd}-${random}${number}`;
 };
-
 
 const ParcelForm = () => {
   const {
@@ -24,7 +23,8 @@ const ParcelForm = () => {
     formState: { errors }
   } = useForm();
 
-  const {user } = useAuth();
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
   const warehouses = useLoaderData();
 
@@ -108,22 +108,27 @@ const ParcelForm = () => {
     const parcelData = {
       ...data,
       created_by: user.email,
-      cost:total,
-      payment_status: "unpaid",
-      delivery_status: "not_collected",
+      cost: total,
+      payment_status: 'unpaid',
+      delivery_status: 'not_collected',
       creation_date: new Date().toISOString(),
-      tracking_id: generateTrackingId(), 
+      tracking_id: generateTrackingId()
     };
 
     console.log('Saved Parcel:', parcelData);
 
-    Swal.fire({
-      icon: 'success',
-      title: 'Success!',
-      text: 'Parcel info saved successfully.',
-      showConfirmButton: false,
-      timer: 2000,
-      timerProgressBar: true
+    // save parcel in database
+    axiosSecure.post('/parcels', parcelData).then((res) => {
+      if (res.data.insertedId) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'Parcel info saved successfully.',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true
+        });
+      }
     });
 
     reset(); // ✅ Reset form after success
@@ -278,6 +283,3 @@ const ParcelForm = () => {
 };
 
 export default ParcelForm;
-
-
-// module-64.4
