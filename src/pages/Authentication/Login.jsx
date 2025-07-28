@@ -1,12 +1,17 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import SocialLogin from './SocialLogin/SocialLogin';
 import useAuth from '../../hooks/useAuth';
+import { toast } from 'react-toastify';
 
 const Login = () => {
 
   const {signIn} = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from = location.state?.from || '/' 
+  // console.log(location)
 
   const {
     register,
@@ -15,12 +20,15 @@ const Login = () => {
   } = useForm();
 
   const onSubmit = (data) => {
-    console.log(data);
+    // console.log(data);
     signIn(data.email, data.password)
       .then((result) => {
         console.log(result.data)
+        toast.success("User login successful")
+        navigate(from)
       }).catch((err) => {
         console.error(err)
+        toast.error(err.code)
       });
   };
 
@@ -56,7 +64,7 @@ const Login = () => {
               <p>
                 <small className="text-gray-600 md:font-medium md:text-sm">
                   Don't have an account ? Please{' '}
-                  <Link to="/register" className="btn btn-link p-0">
+                  <Link to="/register"  state={{from}} className="btn btn-link p-0">
                     Register
                   </Link>
                 </small>

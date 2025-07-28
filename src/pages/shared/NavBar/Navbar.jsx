@@ -5,6 +5,8 @@ import useAuth from '../../../hooks/useAuth';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  // console.log(user);
+  
 
   const links = (
     <>
@@ -23,7 +25,10 @@ const Navbar = () => {
         </>
       )}
       <li>
-        <NavLink to="/about">About Us</NavLink>
+        <NavLink to="/beARider">Be a Rider</NavLink>
+      </li>
+      <li>
+        <NavLink to="/">About Us</NavLink>
       </li>
     </>
   );
@@ -33,7 +38,7 @@ const Navbar = () => {
   const handleLogout = () => {
     logout()
       .then(() => {
-        console.log('user logout successful');
+        // console.log('user logout successful');
       })
       .catch((err) => {
         console.error(err);
@@ -60,6 +65,7 @@ const Navbar = () => {
         <ul className="menu menu-horizontal px-1">{links}</ul>
       </div>
       <div className="navbar-end">
+        {user?.photoURL && <img className='w-16 h-16 mr-2 p-0.5 bg-blue-200 object-cover rounded-full' src={user?.photoURL} title={user?.displayName} alt="" />}
         {user?.email ? (
           <button onClick={handleLogout} className="btn btn-primary text-black">
             Logout

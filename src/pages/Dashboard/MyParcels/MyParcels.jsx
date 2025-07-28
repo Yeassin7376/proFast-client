@@ -5,10 +5,12 @@ import { FaEye, FaTrash, FaMoneyBillAlt } from 'react-icons/fa';
 import useAuth from '../../../hooks/useAuth';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router';
 
 const MyParcels = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
 
   const { data: parcels = [], refetch} = useQuery({
     queryKey: ['my-parcels', user.email],
@@ -17,16 +19,16 @@ const MyParcels = () => {
       return res.data;
     }
   });
-  console.log(parcels);
+  // console.log(parcels);
 
   const handleView = (parcel) => {
     console.log('Viewing parcel', parcel);
     // open modal or route to details page
   };
 
-  const handlePay = (parcel) => {
-    console.log('Paying for parcel', parcel);
-    // open payment modal or redirect
+  const handlePay = (id) => {
+    // console.log('Paying for parcel', id);
+    navigate(`/dashboard/payment/${id}`)
   };
 
   const handleDelete = async (parcel) => {
@@ -58,6 +60,7 @@ const MyParcels = () => {
           }
         });
       } catch (error) {
+        console.log(error)
         Swal.fire({
           title: 'Error!',
           text: 'Could not delete the parcel.',
@@ -96,7 +99,7 @@ const MyParcels = () => {
                 <button className="btn btn-sm btn-info tooltip" data-tip="View Details" onClick={() => handleView(parcel)}>
                   <FaEye />
                 </button>
-                <button className="btn btn-sm btn-success tooltip" data-tip="Pay" disabled={parcel.payment_status === 'paid'} onClick={() => handlePay(parcel)}>
+                <button className="btn btn-sm btn-success tooltip" data-tip="Pay" disabled={parcel.payment_status === 'paid'} onClick={() => handlePay(parcel._id)}>
                   <FaMoneyBillAlt />
                 </button>
                 <button className="btn btn-sm btn-error tooltip" data-tip="Delete" onClick={() => handleDelete(parcel)}>

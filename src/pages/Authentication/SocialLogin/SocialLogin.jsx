@@ -1,22 +1,41 @@
 import React from 'react';
 import useAuth from '../../../hooks/useAuth';
+import { useLocation, useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
+import useAxios from '../../../hooks/useAxios';
 
 const SocialLogin = () => {
+  const { signInWithGoogle } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from = location.state?.from || '/';
+  const axiosInstant = useAxios();
 
-    const {signInWithGoogle} = useAuth();
+  const handleGoogleSignIn = () => {
+    signInWithGoogle()
+      .then(async(result) => {
+       const user = result.user;
+       const userInfo ={
+        email: user.email,
+        role: 'user', //default role
+        created_at: new Date().toISOString(),
+        last_login: new Date().toISOString()
+      }
 
-    const handleGoogleSignIn = () =>{
-        signInWithGoogle()
-            .then((result) => {
-                console.log(result.user)
-            }).catch((err) => {
-                console.error(err)
-            });
-    }
+      const res = await axiosInstant.post('/users', userInfo);
+      console.log(res);
+      
+        toast.success('User login successful');
+        navigate(from, { replace: true });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   return (
-    <div className='text-center'>
-      <p className='mb-4'>OR</p>
+    <div className="text-center">
+      <p className="mb-4">OR</p>
       <button onClick={handleGoogleSignIn} className="w-full btn bg-white text-black border-[#e5e5e5]">
         <svg aria-label="Google logo" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
           <g>
